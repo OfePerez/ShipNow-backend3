@@ -1,15 +1,9 @@
-const mongoose = require('mongoose'); // ORM -> mongodb
+const mongoose = require('mongoose');
 const config = require('./config');
 
 async function connectDB() {
-  try {
-    await mongoose.connect(config.MONGO_URI);
-    console.log('Conectado a MongoDB:', config.MONGO_URI);
-  } catch (error) {
-    // Manejo de errores crudo: solo logueamos y matamos el proceso.
-    console.log('Error al conectar a MongoDB:', error.message);
-    process.exit(1);
-  }
+    await mongoose.connect(config.MONGODB_URI);
+    console.log('Conectado correctamente a MongoDB');
 }
 
 module.exports = connectDB;

@@ -1,33 +1,21 @@
-const express = require('express');
+const app= require('./app');
 const config = require('./config');
 const connectDB = require('./db');
 
-const ordersRouter = require('./routes/orders');
-const usersRouter = require('./routes/users');
-const couriersRouter = require('./routes/couriers');
-const productsRouter = require('./routes/products');
-const deliveriesRouter = require('./routes/deliveries');
+async function startServer(){
+  try{
+    //esperamo sprimero la conexión a MongoDB
+    await connectDB();
 
-const app = express();
+    //solo se inicia el servidor si la conexión fue exitosa
+    app.listen(config.PORT,()=>{
+      console.log(`ShipNow escuchando en el puerto ${config.PORT}`);
+    });
+  }catch (error){
+    console.error('no se pudo iniciar la aplicación:', error.message);
+    process.exit(1);
+  }
+}
 
-// Middleware para parsear JSON.
-app.use(express.json());
 
-// Montamos los routers. Toda la logica vive adentro de las rutas (controllers gordos).
-app.use('/api/orders', ordersRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/couriers', couriersRouter);
-app.use('/api/products', productsRouter);
-app.use('/api/deliveries', deliveriesRouter);
-
-// Ruta de health check basica.
-app.get('/', (req, res) => {
-  res.send('ShipNow API v1 - corriendo');
-});
-
-// Conectamos a la base y levantamos el server.
-connectDB();
-
-app.listen(config.PORT, () => {
-  console.log('ShipNow escuchando en el puerto ' + config.PORT);
-});
+startServer();

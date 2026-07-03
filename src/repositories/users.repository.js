@@ -1,14 +1,29 @@
-const User = require('../models/user');
+const User = require("../models/user");
 
 class UserRepository {
-  static async create({ name, email, role }) {
-    const user = await User.create({
-      name,
-      email,
-      role: role || USER_ROLE.USER,
-    });
+  static async create(userData) {
+    return User.create(userData);
+  }
 
-    return user;
+  static async findByEmail(email) {
+    return User.findOne({ email }).lean();
+  }
+
+  static async getAll() {
+    return User.find(
+      {},
+      {
+        __v: 0,
+      }
+    )
+      .sort({ name: 1 })
+      .lean();
+  }
+
+  static async getById(id) {
+    return User.findById(id, {
+      __v: 0,
+    }).lean();
   }
 }
 
