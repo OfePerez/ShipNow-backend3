@@ -6,6 +6,7 @@ const usersRouter = require('./routes/users');
 const couriersRouter= require('./routes/couriers');
 const productsRouter= require('./routes/products');
 const deliveriesRouter= require('./routes/deliveries');
+const mocksRouter= require('./routes/mocks');
 
 const app= express();
 
@@ -18,6 +19,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/couriers', couriersRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/deliveries', deliveriesRouter);
+app.use("/api/mocks", mocksRouter);
 
 //Health check
 app.get("/", (req,res)=>{

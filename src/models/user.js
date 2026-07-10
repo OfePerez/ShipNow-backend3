@@ -3,7 +3,12 @@ const { USER_ROLES } = require('../constants');
 
 // Modelo de User (cliente).
 const userSchema = new mongoose.Schema({
-  name: {
+  first_name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  last_name: {
     type: String,
     required: true,
     trim: true,

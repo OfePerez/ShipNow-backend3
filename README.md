@@ -95,3 +95,47 @@ Los roles y estados no se escriben como strings dispersos. Se encuentran central
 
 ## Decisiones de diseño
 ```
+
+###Mocking y carga de datos de prueba
+
+El proyecto incluye un módulo de mocking bajo `/api/mocks`.
+
+La carpeta `mocks/` se encuentra fuera de `src/` y contiene los datos simulados. La integración con la API respeta la arquitectura por capas: routes, controllers, services y repositories.
+
+### Endpoints de mocks
+
+#### Obtener usuarios simulados
+
+GET `/api/mocks/users`
+
+Devuelve usuarios simulados con roles válidos (`user`, `admin`, `courier`) sin guardarlos en MongoDB.
+
+#### Obtener pedidos simulados
+
+GET `/api/mocks/orders`
+
+Devuelve pedidos simulados con estados y prioridades válidas sin guardarlos en MongoDB.
+
+#### Obtener entregas simuladas
+
+GET `/api/mocks/deliveries`
+
+Devuelve entregas simuladas con estados válidos sin guardarlas en MongoDB.
+
+#### Obtener todos los mocks
+
+GET `/api/mocks/all`
+
+Devuelve usuarios, pedidos y entregas simuladas en una sola respuesta.
+
+#### Cargar datos de prueba en MongoDB
+
+POST `/api/mocks/seed`
+
+Inserta usuarios, pedidos y entregas de prueba en MongoDB. Los pedidos se asocian a usuarios y repartidores, y las entregas se asocian a pedidos y repartidores.
+
+### Ejemplo de uso
+
+```bash
+GET http://localhost:8080/api/mocks/all
+POST http://localhost:8080/api/mocks/seed
