@@ -1,25 +1,23 @@
 const UserRepository = require("../repositories/users.repository");
 const { USER_ROLES } = require("../constants");
+const AppError= require("../errors/AppError");
 
-function createServiceError(message, statusCode) {
-  const error = new Error(message);
-  error.statusCode = statusCode;
-  return error;
-}
 
 class UserService {
   static async create({ name, email, role }) {
     if (!name || typeof name !== "string") {
-      throw createServiceError(
+      throw new AppError(
         "El nombre del usuario es obligatorio",
-        400
+        400,
+        "USER_NAME_REQUIRED"
       );
     }
 
     if (!email || typeof email !== "string") {
-      throw createServiceError(
+      throw new AppError(
         "El email del usuario es obligatorio",
-        400
+        400,
+        "USER_EMAIL_REQUIRED"
       );
     }
 
@@ -29,16 +27,18 @@ class UserService {
     );
 
     if (!emailIsValid) {
-      throw createServiceError(
+      throw new AppError(
         "El formato del email no es válido",
-        400
+        400,
+        "INVALID_EMAIL_FORMAT"
       );
     }
 
     if (role && !Object.values(USER_ROLES).includes(role)) {
-      throw createServiceError(
+      throw new AppError(
         "El rol del usuario no es válido",
-        400
+        400,
+        "INVALID_USER_ROLE"
       );
     }
 
@@ -46,9 +46,10 @@ class UserService {
       await UserRepository.findByEmail(normalizedEmail);
 
     if (existingUser) {
-      throw createServiceError(
+      throw new AppError(
         "Ya existe un usuario con ese email",
-        409
+        409,
+        "USER_EMAIL_ALREADY_EXISTS"
       );
     }
 
@@ -67,7 +68,11 @@ class UserService {
     const user = await UserRepository.getById(id);
 
     if (!user) {
-      throw createServiceError("Usuario no encontrado", 404);
+      throw new AppError(
+        "Usuario no encontrado", 
+        404,
+        "USER_NOT_FOUND"
+      );
     }
 
     return user;

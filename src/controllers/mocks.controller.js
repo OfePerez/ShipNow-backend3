@@ -33,7 +33,7 @@ function getAllMocks(req,res){
         payload: mocks,
     });
 }
-async function seedMocks(req,res) {
+async function seedMocks(req,res, next) {
     try{
         const createdMocks = await mockService.seedMocks();
 
@@ -43,11 +43,7 @@ async function seedMocks(req,res) {
             payload: createdMocks,
         });
     }catch (error){
-        res.status(500).json({
-            status:'error',
-            message:'Error al inertar datos de prueba',
-            payload: error.message,
-        });
+        next(error);
     }
     
 }

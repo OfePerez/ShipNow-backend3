@@ -35,7 +35,7 @@ async function seedMocks({users, orders, deliveries}) {
         return{
             ...delivery,
             orderId:order._id,
-            courierdId: courier._id,
+            courierId: courier._id,
         };
     });
 
