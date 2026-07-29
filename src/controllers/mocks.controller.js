@@ -1,29 +1,44 @@
 const mockService= require('../services/mocks.service');
 
-function getMockUsers(req,res){
-    const users= mockService.getMockUsers();
+function getMockUsers(req,res, next){
+    const {quantity}= req.query;
+    try{
+        const users= mockService.getMockUsers();
 
-    res.json({
-        status: 'success',
-        payload: users,
-    });
+            res.json({
+            status: 'success',
+            payload: users,
+            })
+        } catch(error){
+            next(error);
+        }
 }
 
-function getMockOrders(req,res){
-    const orders= mockService.getMockOrders();
+function getMockOrders(req,res, next){
+    const{quantity}=req.query;
+    try{
+        const orders= mockService.getMockOrders();
 
-    res.json({
-        status: 'success',
-        payload: orders,
-    });
+        res.json({
+            status: 'success',
+            payload: orders,
+        })
+    }catch(error){
+        next(error);
+    }
 }
-function getMockDeliveries(req,res){
-    const deliveries= mockService.getMockDeliveries();
+function getMockDeliveries(req,res, next){
+    const {quantity}=req.query;
+    try{
+        const deliveries= mockService.getMockDeliveries();
 
-    res.json({
-        status: 'success',
-        payload: deliveries,
-    });
+        res.json({
+            status: 'success',
+            payload: deliveries,
+        })
+    }catch(error){
+        next(error);
+    }
 }
 function getAllMocks(req,res){
     const mocks= mockService.getAllMocks();
@@ -38,7 +53,7 @@ async function seedMocks(req,res, next) {
         const createdMocks = await mockService.seedMocks();
 
         res.status(201).json({
-            status:'succes',
+            status:'success',
             message: 'Datos de prueba insertados correctamente',
             payload: createdMocks,
         });

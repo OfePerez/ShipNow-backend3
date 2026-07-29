@@ -16,7 +16,7 @@ const ERRORS= {
     },
     INVALID_PRODUCT_STATUS:{
         message: "El estado del producto no es válido",
-        statusCode:404,
+        statusCode:400,
         code:"INVALID_PRODUCT_STATUS",
     },
     PRODUCT_NOT_FOUND:{
@@ -58,7 +58,7 @@ const ERRORS= {
     },
 
     INVALID_MOCK_QUANTITY:{
-        message:"La cantidad de mocks debe ser un número entero mayor o igual a 0",
+        message:"La cantidad de mocks debe ser un número entero mayor a 0",
         statusCode:400,
         code:"INVALID_MOCK_QUANTITY"
     },
@@ -67,6 +67,11 @@ const ERRORS= {
         statusCode:500,
         code:"MOCK_DATABASE_ERROR",
     },
+    INVALID_MOCK_DATA:{
+        message: "Los datos generados para los mocks no son válidos",
+        statusCode: 400,
+        code: "INVALID_MOCK_DATA",
+    }
 
 
 }
