@@ -1,9 +1,8 @@
 const { mockUsers, mockOrders, mockDeliveries}= require('../../mocks');
 const mocksRespository = require('../repositories/mocks.repository');
-const AppError= require("../errors/AppError");
-const {ERROR, ERRORS}= require("../errors/errorDictionary");
-const { validate } = require('../models/user');
-const order = require('../models/order');
+const {AppError}= require("../errors/AppError");
+const { USER_ROLES, ORDER_STATUS, ORDER_PRIORITY, DELIVERY_STATUS } = require('../constants');
+const {ERRORS} = require("../errors/errorDictionary");
 
 
 
@@ -46,7 +45,12 @@ function getAllMocks(quantity){
 }
 
 function validateMockUsers(users){
+    const validRoles= Object.values(USER_ROLES);
+
     const hasInvalidUser= users.some((user)=>{
+        const hasInvalidRole= user.role !== undefined &&
+        (typeof user.role !== "string" || !validRoles.includes(user.role));
+
         return(
             typeof user.first_name !== "string" ||
             user.first_name.trim()=== "" ||
@@ -54,9 +58,7 @@ function validateMockUsers(users){
             user.last_name.trim()==="" ||
             typeof user.email !== "string" ||
             user.email.trim() === "" ||
-            typeof user.password !== "string" ||
-            user.passwrod.trim()=== "" ||
-            !["user", "admin", "courier"].includes(user.role)
+            hasInvalidRole
         );
     });
     if (hasInvalidUser){
@@ -64,17 +66,62 @@ function validateMockUsers(users){
     }
 }
 function validateMockOrders(orders){
+    const validStatuses= Object.values(ORDER_STATUS);
+    const validPriorities= Object.values(ORDER_PRIORITY);
+
     const hasInvalidOrder = orders.some((order)=>{
+        const hasInvalidCost= order.cost !== undefined &&
+        (typeof order.cost !== "number" ||
+            !Number.isFinite(order.cost)
+        );
+        const hasInvalidStatus= order.status !== undefined && 
+        ( typeof order.status !== "string" ||
+            !validStatuses.includes(order.status)
+        );
+        const hasInvalidPriority= order.priority !== undefined &&
+        ( typeof order.priority !== "string" ||
+            !validPriorities.includes(order.priority)
+        );
+        const hasInvalidItems =
+            order.items !== undefined &&
+            (
+                !Array.isArray(order.items) ||
+                order.items.some((item) =>
+                    typeof item !== "object" ||
+                    item === null ||
+                    Array.isArray(item) ||
+                    (
+                        item.name !== undefined &&
+                        typeof item.name !== "string"
+                    ) ||
+                    (
+                        item.quantity !== undefined &&
+                    (
+                        typeof item.quantity !== "number" ||
+                        !Number.isFinite(item.quantity)
+                    )
+                ) ||
+                (
+                    item.price !== undefined &&
+                (
+                    typeof item.price !== "number" ||
+                    !Number.isFinite(item.price)
+                )
+            )
+        )
+    );
+
         return (
             typeof order.customerName !== "string" ||
             order.customerName.trim()=== ""||
             typeof order.address !== "string" ||
             order.address.trim()=== "" ||
             typeof order.weight !== "number" ||
-            typeof order.cost !== "number" ||
-            typeof order.status !== "string" ||
-            typeof order.priority !== "string" ||
-            !Array.isArray(order.items)
+            !Number.isFinite(order.weight) ||
+            hasInvalidCost ||
+            hasInvalidStatus ||
+            hasInvalidPriority ||
+            hasInvalidItems
         );
     });
     if(hasInvalidOrder){
@@ -83,12 +130,15 @@ function validateMockOrders(orders){
 }
 
 function validateMockDeliveries(deliveries){
+    const validStatuses = Object.values(DELIVERY_STATUS);
+
     const hasInvalidDeliveries = deliveries.some((delivery)=>{
-        return (
-            typeof delivery.status !== "string"  ||
-            delivery.status.trim() === "" ||
-            !(delivery.assignedAt instanceof Date)
-        );
+        const hasInvalidStatus= delivery.status !== undefined && 
+        ( typeof delivery.status !== "string" || !validStatuses.includes(delivery.status));
+        
+        const hasInvalidAssignedAt = delivery.assignedAt !== undefined &&
+        ( !(delivery.assignedAt instanceof Date) || Number.isNaN(delivery.assignedAt.getTime()));
+        return hasInvalidStatus || hasInvalidAssignedAt;
     });
     if(hasInvalidDeliveries){
         throw new AppError(ERRORS.INVALID_MOCK_DATA);

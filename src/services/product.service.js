@@ -1,6 +1,6 @@
 const productRepository= require('../repositories/product.repository');
 const {PRODUCT_STATUS}= require('../constants');
-const AppError  = require('../errors/AppError');
+const {AppError}  = require('../errors/AppError');
 const {ERRORS}= require("../errors/errorDictionary");
 
 

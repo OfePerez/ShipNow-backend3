@@ -3,9 +3,9 @@ const { ORDER_STATUS, ORDER_PRIORITY}= require('../constants');
 
 // Modelo de Order (envio/pedido).
 const orderSchema = new mongoose.Schema({
-  customerName: { type: String, required: true }, // se mantiene del v1 original
+  customerName: { type: String, required: true, trim: true}, // se mantiene del v1 original
   customer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  address: { type: String, required: true },
+  address: { type: String, required: true, trim: true},
   weight: { type: Number, required: true },
   cost: { type: Number }, // se calcula en la ruta: cost = weight * 10
   status: { 

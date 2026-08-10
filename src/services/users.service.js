@@ -1,6 +1,6 @@
 const UserRepository = require("../repositories/users.repository");
 const { USER_ROLES } = require("../constants");
-const AppError= require("../errors/AppError");
+const {AppError}= require("../errors/AppError");
 const {ERRORS}= require("../errors/errorDictionary");
 
 
