@@ -5,9 +5,12 @@ const {ERRORS}= require("../errors/errorDictionary");
 
 
 class UserService {
-  static async create({ name, email, role }) {
-    if (!name || typeof name !== "string") {
-      throw new AppError(ERRORS.USER_NAME_REQUIRED);
+  static async create({ first_name, last_name,  email, role }) {
+    if (typeof first_name!== "string" || !first_name.trim()) {
+      throw new AppError(ERRORS.USER_FIRST_NAME_REQUIRED);
+    }
+    if(typeof last_name!== "string" ||!last_name.trim()) {
+      throw new AppError(ERRORS.USER_LAST_NAME_REQUIRED);
     }
 
     if (!email || typeof email !== "string") {
@@ -35,7 +38,8 @@ class UserService {
     }
 
     return UserRepository.create({
-      name: name.trim(),
+      first_name: first_name.trim(),
+      last_name: last_name.trim(),
       email: normalizedEmail,
       role: role || USER_ROLES.USER,
     });

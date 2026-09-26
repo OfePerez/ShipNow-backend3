@@ -26,10 +26,15 @@ const ERRORS= {
     },
 
 
-    USER_NAME_REQUIRED:{
-        message:"El nombre del usuario es obligatorio",
-        statusCode:400,
-        code:"USER_NAME_REQUIRED",
+    USER_FIRST_NAME_REQUIRED: {
+        message: "El nombre del usuario es obligatorio",
+        statusCode: 400,
+        code: "USER_FIRST_NAME_REQUIRED",
+    },
+    USER_LAST_NAME_REQUIRED: {
+        message: "El apellido del usuario es obligatorio",
+        statusCode: 400,
+        code: "USER_LAST_NAME_REQUIRED",
     },
     USER_EMAIL_REQUIRED:{
         message:"El email del usuario es obligatorio",
@@ -71,8 +76,55 @@ const ERRORS= {
         message: "Los datos generados para los mocks no son válidos",
         statusCode: 400,
         code: "INVALID_MOCK_DATA",
-    }
+    },
 
+    ORDER_REQUIRED_FIELDS: {
+        message: "El nombre del cliente, la dirección y el peso son obligatorios",
+        statusCode: 400,
+        code: "ORDER_REQUIRED_FIELDS",
+    },
+    INVALID_ORDER_WEIGHT: {
+        message: "El peso debe ser un número mayor a 0",
+        statusCode: 400,
+        code: "INVALID_ORDER_WEIGHT",
+    },
+    ORDER_STATUS_REQUIRED: {
+        message: "El estado del pedido es obligatorio",
+        statusCode: 400,
+        code: "ORDER_STATUS_REQUIRED",
+    },
+    INVALID_ORDER_STATUS: {
+        message: "El estado del pedido no es válido",
+        statusCode: 400,
+        code: "INVALID_ORDER_STATUS",
+    },
+    INVALID_ORDER_PRIORITY: {
+        message: "La prioridad del pedido no es válida",
+        statusCode: 400,
+        code: "INVALID_ORDER_PRIORITY",
+    },
+    ORDER_NOT_FOUND: {
+        message: "Pedido no encontrado",
+        statusCode: 400,
+        code: "ORDER_NOT_FOUND",
+    },
 
+    INVALID_ORDER_ITEMS: {
+        message: "los items del pedido deben enviarse con un arreglo",
+        statusCode: 400,
+        code: "INVALID_ORDER_ITEMS",
+    },
+
+    INVALID_RESOURCE_ID: {
+        message: "El identificador proporcionado no es válido",
+        statusCode: 400,
+        code: "INVALID_RESOURCE_ID",
+    },
+
+    INVALID_PAGINATION: {
+        message: "Page y limit deben ser números enteros mayores a 0; limit no puede superar 100",
+        statusCode: 400,
+        code: "INVALID_PAGINATION",
+    },
 }
 module.exports={ERRORS};
