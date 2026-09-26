@@ -154,6 +154,50 @@ Los datos simulados se almacenan fuera de `src/` y la integración con la API re
 | POST | `/api/mocks/seed` | Inserta datos de prueba en MongoDB |
 
 ---
+## Logging y monitoreo básico
+
+ShipNow utiliza Winston como logger centralizado y `winston-daily-rotate-file` para la rotación de archivos.
+
+### Niveles disponibles
+
+| Nivel | Uso |
+|---|---|
+| `debug` | Información técnica para depuración |
+| `http` | Actividad relacionada con solicitudes HTTP |
+| `info` | Operaciones completadas correctamente |
+| `warning` | Validaciones y advertencias del negocio |
+| `error` | Errores inesperados del servidor |
+| `fatal` | Fallas críticas de la aplicación |
+
+En desarrollo se registran todos los niveles desde `debug`. En producción se registran `info`, `warning`, `error` y `fatal`.
+
+### Endpoint de prueba
+
+Para generar mensajes de todos los niveles:
+
+```http
+GET /api/logger/test
+```
+
+Ejemplo:
+
+```text
+http://localhost:8080/api/logger/test
+```
+
+### Persistencia y rotación
+
+Los niveles `error` y `fatal` se guardan en:
+
+```text
+logs/error-AAAA-MM-DD.log
+```
+
+Los archivos rotan diariamente o al alcanzar 10 MB y se conservan durante 14 días.
+
+La carpeta `logs/` está incluida en `.gitignore`, por lo que los registros generados y los archivos internos de rotación no se suben al repositorio.
+
+---
 
 ## Tecnologías utilizadas
 
@@ -163,3 +207,5 @@ Los datos simulados se almacenan fuera de `src/` y la integración con la API re
 - Mongoose
 - dotenv
 - Nodemon
+- Winston
+- winston-daily-rotate-file

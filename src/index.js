@@ -1,6 +1,7 @@
 const app= require('./app');
 const config = require('./config');
 const connectDB = require('./db');
+const logger = require("./config/logger");
 
 async function startServer(){
   try{
@@ -9,10 +10,10 @@ async function startServer(){
 
     //solo se inicia el servidor si la conexión fue exitosa
     app.listen(config.PORT,()=>{
-      console.log(`ShipNow escuchando en el puerto ${config.PORT}`);
+      logger.info(`ShipNow escuchando en el puerto ${config.PORT}`);
     });
   }catch (error){
-    console.error('no se pudo iniciar la aplicación:', error.message);
+    logger.fatal('no se pudo iniciar la aplicación:', error.message);
     process.exit(1);
   }
 }
