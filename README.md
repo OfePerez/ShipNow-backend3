@@ -1,211 +1,109 @@
 # ShipNow
 
-API de logística y envíos desarrollada con Node.js, Express, MongoDB y Mongoose.
-
-El proyecto implementa una arquitectura por capas para separar responsabilidades entre la recepción de las solicitudes HTTP, la lógica de negocio y el acceso a la base de datos. Además, incorpora un sistema centralizado de manejo de errores mediante `AppError` y un middleware global.
-
----
+API backend de logística desarrollada con Node.js, Express, MongoDB y Mongoose. Incluye arquitectura por capas, errores centralizados, logging, Swagger, tests funcionales, carga de archivos y ejecución con Docker.
 
 ## Arquitectura
-
-El flujo principal de la aplicación es:
 
 ```text
 Router → Controller → Service → Repository → Mongoose
                         │
-                        ▼
-                  AppError
+                     AppError
                         │
-                        ▼
-                 errorHandler
+                  errorHandler
 ```
 
-### Responsabilidades
+Los routers solo definen rutas. Las validaciones y reglas de negocio viven en Services; los Repositories concentran el acceso a MongoDB.
 
-- **Router:** relaciona cada endpoint con su Controller.
-- **Controller:** recibe la solicitud HTTP, delega la lógica al Service y deriva cualquier error al middleware mediante `next(error)`.
-- **Service:** contiene las reglas de negocio y las validaciones. Interpreta los resultados del Repository y lanza `AppError` cuando corresponde.
-- **Repository:** encapsula el acceso a MongoDB utilizando Mongoose.
-- **Model:** define la estructura de los documentos almacenados en la base de datos.
-- **errorHandler:** centraliza el manejo de errores y genera respuestas JSON consistentes para toda la API.
+## Instalación y configuración
 
-Esta separación facilita el mantenimiento, las pruebas y la escalabilidad del proyecto.
-
----
-
-## Manejo de errores
-
-La aplicación implementa un sistema centralizado de manejo de errores.
-
-- Los errores de negocio se representan mediante `AppError`.
-- Los Services lanzan `AppError` cuando una regla de negocio no se cumple.
-- Los Controllers delegan los errores utilizando `next(error)`.
-- El middleware `errorHandler` transforma cualquier error en una respuesta HTTP consistente.
-- Los errores internos (`500`) muestran un mensaje genérico al cliente y registran el error en el servidor.
-
----
-
-## Requisitos
-
-- Node.js
-- npm
-- MongoDB local o MongoDB Atlas
-
----
-
-## Configuración
-
-Instalar las dependencias:
+Requisitos: Node.js 22 o superior, npm y MongoDB.
 
 ```bash
 npm install
-```
-
-Crear un archivo `.env` en la raíz del proyecto tomando como referencia `.env.example`:
-
-```env
-PORT=8080
-MONGODB_URI=mongodb://127.0.0.1:27017/shipnow
-NODE_ENV=development
-```
-
-También puede utilizarse una URI de MongoDB Atlas.
-
-La aplicación valida estas variables durante el arranque. Si falta alguna o contiene un valor inválido, el servidor no iniciará y mostrará un mensaje descriptivo.
-
-El archivo `.env` está excluido del repositorio para evitar publicar información sensible.
-
----
-
-## Ejecución
-
-Modo producción:
-
-```bash
-npm start
-```
-
-Modo desarrollo:
-
-```bash
+cp .env.example .env
 npm run dev
 ```
 
-La API estará disponible en:
+Variables principales:
 
-```text
-http://localhost:8080
+| Variable | Uso |
+|---|---|
+| `PORT` | Puerto HTTP |
+| `MONGODB_URI` | Conexión principal a MongoDB |
+| `MONGODB_URI_TEST` / `TEST_DB_NAME` | Base separada para tests |
+| `NODE_ENV` | `development`, `test` o `production` |
+| `LOG_LEVEL` | Nivel mínimo de Winston |
+| `UPLOAD_DIR` | Carpeta de archivos |
+| `UPLOAD_MAX_SIZE_MB` | Tamaño máximo por archivo |
+| `INTERNAL_ENDPOINTS_ENABLED` | Habilita mocks y logger test |
+| `SWAGGER_ENABLED` | Habilita la documentación |
+
+La aplicación falla al iniciar si faltan `PORT`, `MONGODB_URI` o `NODE_ENV`. No deben subirse archivos `.env`, logs, uploads, coverage ni `node_modules`.
+
+## Ejecución
+
+```bash
+npm run dev
+npm start
+npm test
 ```
 
----
+Los tests usan Mocha, Chai y Supertest y fuerzan la base `shipnow_test`; esa base se limpia antes y después de la suite.
+
+## Swagger y health check
+
+- Swagger UI: http://localhost:8080/api/docs
+- Especificación JSON: http://localhost:8080/api/docs.json
+- Health check: http://localhost:8080/api/health
+
+Swagger organiza la API por Users, Orders, Deliveries, Mocks, Logger, Couriers, Products y Health. Incluye schemas reutilizables, parámetros, bodies, respuestas y errores.
 
 ## Endpoints principales
 
-### Users
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/api/users` | Crear usuario |
-| GET | `/api/users` | Obtener todos los usuarios |
-| GET | `/api/users/:id` | Obtener usuario por ID |
-
-### Products
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/api/products` | Crear producto |
-| GET | `/api/products` | Obtener todos los productos |
-| GET | `/api/products/:id` | Obtener producto por ID |
-
----
-
-## Constantes del dominio
-
-Los valores utilizados por la aplicación se encuentran centralizados en `src/constants`.
-
-### Roles de usuario
-
-- `ADMIN`
-- `USER`
-
-### Estados de producto
-
-- `AVAILABLE`
-- `OUT_OF_STOCK`
-
-Centralizar estas constantes evita el uso de cadenas de texto dispersas por el proyecto y facilita el mantenimiento.
-
----
-
-## Mocking y datos de prueba
-
-El proyecto incluye un módulo de mocking bajo `/api/mocks`.
-
-Los datos simulados se almacenan fuera de `src/` y la integración con la API respeta la misma arquitectura por capas utilizada por el resto del proyecto.
-
-### Endpoints disponibles
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/api/mocks/users` | Devuelve usuarios simulados |
-| GET | `/api/mocks/orders` | Devuelve pedidos simulados |
-| GET | `/api/mocks/deliveries` | Devuelve entregas simuladas |
-| GET | `/api/mocks/all` | Devuelve todos los datos simulados |
-| POST | `/api/mocks/seed` | Inserta datos de prueba en MongoDB |
-
----
-## Logging y monitoreo básico
-
-ShipNow utiliza Winston como logger centralizado y `winston-daily-rotate-file` para la rotación de archivos.
-
-### Niveles disponibles
-
-| Nivel | Uso |
+| Módulo | Endpoints |
 |---|---|
-| `debug` | Información técnica para depuración |
-| `http` | Actividad relacionada con solicitudes HTTP |
-| `info` | Operaciones completadas correctamente |
-| `warning` | Validaciones y advertencias del negocio |
-| `error` | Errores inesperados del servidor |
-| `fatal` | Fallas críticas de la aplicación |
+| Users | `POST /api/users`, `GET /api/users`, `GET /api/users/:id` |
+| Documentos | `POST /api/users/:id/documents` |
+| Orders | `POST/GET /api/orders`, `GET/DELETE /api/orders/:id`, `PATCH /api/orders/:id/status` |
+| Couriers | `POST/GET /api/couriers`, `GET /api/couriers/:id` |
+| Products | `POST/GET /api/products`, `GET /api/products/:id` |
+| Deliveries | `POST/GET /api/deliveries`, `GET /api/deliveries/:id`, `PATCH /api/deliveries/:id/status` |
+| Comprobantes | `POST /api/deliveries/:id/proof` |
+| Mocks | `GET /api/mocks/{users,orders,deliveries,all}`, `POST /api/mocks/seed` |
+| Logger | `GET /api/logger/test` |
 
-En desarrollo se registran todos los niveles desde `debug`. En producción se registran `info`, `warning`, `error` y `fatal`.
+Los listados de usuarios, pedidos y entregas aceptan `page` y `limit` (máximo 100), además de filtros propios.
 
-### Endpoint de prueba
+### Archivos
 
-Para generar mensajes de todos los niveles:
+Los documentos usan `multipart/form-data`, campo de archivo `document` y `documentType` con valores `identity`, `address` u `other`. Los comprobantes usan el campo `proof`. Se aceptan PDF, JPEG y PNG hasta el límite configurado. MongoDB guarda solo metadatos; los binarios quedan en `uploads/`, excluida de Git.
 
-```http
-GET /api/logger/test
+## Errores y logging
+
+Los errores responden siempre:
+
+```json
+{ "status": "error", "message": "Descripción", "code": "ERROR_CODE" }
 ```
 
-Ejemplo:
+Winston genera logs rotativos diarios `combined-AAAA-MM-DD.log` y `error-AAAA-MM-DD.log`, con máximo de 10 MB y retención de 14 días. La consola se usa únicamente en desarrollo.
 
-```text
-http://localhost:8080/api/logger/test
+En producción, mocks y logger test quedan deshabilitados por defecto mediante `INTERNAL_ENDPOINTS_ENABLED=false`. Swagger se mantiene disponible para revisión y puede deshabilitarse por entorno.
+
+## Docker
+
+Construcción y ejecución individual:
+
+```bash
+docker build -t shipnow-api .
+docker run --env-file .env -p 8080:8080 shipnow-api
 ```
 
-### Persistencia y rotación
+API y MongoDB juntos:
 
-Los niveles `error` y `fatal` se guardan en:
-
-```text
-logs/error-AAAA-MM-DD.log
+```bash
+docker compose up --build
+docker compose down
 ```
 
-Los archivos rotan diariamente o al alcanzar 10 MB y se conservan durante 14 días.
-
-La carpeta `logs/` está incluida en `.gitignore`, por lo que los registros generados y los archivos internos de rotación no se suben al repositorio.
-
----
-
-## Tecnologías utilizadas
-
-- Node.js
-- Express
-- MongoDB
-- Mongoose
-- dotenv
-- Nodemon
-- Winston
-- winston-daily-rotate-file
+Compose espera el health check de MongoDB antes de iniciar la API y conserva la base, los logs y uploads en volúmenes. Una vez levantado, probar `/api/health`, `/api/docs` y cualquier endpoint principal en el puerto 8080.

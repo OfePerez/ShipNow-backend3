@@ -105,12 +105,12 @@ const ERRORS= {
     },
     ORDER_NOT_FOUND: {
         message: "Pedido no encontrado",
-        statusCode: 400,
+        statusCode: 404,
         code: "ORDER_NOT_FOUND",
     },
 
     INVALID_ORDER_ITEMS: {
-        message: "los items del pedido deben enviarse con un arreglo",
+        message: "Los items del pedido deben enviarse como un arreglo",
         statusCode: 400,
         code: "INVALID_ORDER_ITEMS",
     },
@@ -125,6 +125,72 @@ const ERRORS= {
         message: "Page y limit deben ser números enteros mayores a 0; limit no puede superar 100",
         statusCode: 400,
         code: "INVALID_PAGINATION",
+    },
+    COURIER_REQUIRED_FIELDS: {
+        message: "El nombre y la zona del repartidor son obligatorios",
+        statusCode: 400,
+        code: "COURIER_REQUIRED_FIELDS",
+    },
+
+    COURIER_NOT_FOUND: {
+        message: "Repartidor no encontrado",
+        statusCode: 404,
+        code: "COURIER_NOT_FOUND",
+    },
+
+    DELIVERY_REQUIRED_FIELDS: {
+        message: "El pedido y el repartidor son obligatorios",
+        statusCode: 400,
+        code: "DELIVERY_REQUIRED_FIELDS",
+    },
+
+    DELIVERY_STATUS_REQUIRED: {
+        message: "El estado de la entrega es obligatorio",
+        statusCode: 400,
+        code: "DELIVERY_STATUS_REQUIRED",
+    },
+
+    INVALID_DELIVERY_STATUS: {
+        message: "El estado de la entrega no es válido",
+        statusCode: 400,
+        code: "INVALID_DELIVERY_STATUS",
+    },
+
+    DELIVERY_NOT_FOUND: {
+        message: "Entrega no encontrada",
+        statusCode: 404,
+        code: "DELIVERY_NOT_FOUND",
+    },
+
+    FILE_REQUIRED: {
+        message: "Debe adjuntar un archivo",
+        statusCode: 400,
+        code: "FILE_REQUIRED",
+    },
+    INVALID_FILE_TYPE: {
+        message: "El tipo de archivo no está permitido",
+        statusCode: 400,
+        code: "INVALID_FILE_TYPE",
+    },
+    FILE_TOO_LARGE: {
+        message: "El archivo supera el tamaño máximo permitido",
+        statusCode: 400,
+        code: "FILE_TOO_LARGE",
+    },
+    INVALID_FILE_FIELD: {
+        message: "El nombre del campo de archivo no es válido",
+        statusCode: 400,
+        code: "INVALID_FILE_FIELD",
+    },
+    INVALID_DOCUMENT_TYPE: {
+        message: "El tipo de documento no es válido",
+        statusCode: 400,
+        code: "INVALID_DOCUMENT_TYPE",
+    },
+    FILE_SAVE_ERROR: {
+        message: "No se pudo asociar el archivo a la entidad",
+        statusCode: 500,
+        code: "FILE_SAVE_ERROR",
     },
 }
 module.exports={ERRORS};

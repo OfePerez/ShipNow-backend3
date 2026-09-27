@@ -2,6 +2,7 @@ const productRepository= require('../repositories/product.repository');
 const {PRODUCT_STATUS}= require('../constants');
 const {AppError}  = require('../errors/AppError');
 const {ERRORS}= require("../errors/errorDictionary");
+const mongoose = require("mongoose");
 
 
 async function createProduct(productData){
@@ -32,6 +33,9 @@ async function getAllProducts(){
 }
 
 async function getProductById(id){
+    if (!mongoose.isValidObjectId(id)) {
+        throw new AppError(ERRORS.INVALID_RESOURCE_ID);
+    }
     const product= await productRepository.getById(id);
 
     if(!product){

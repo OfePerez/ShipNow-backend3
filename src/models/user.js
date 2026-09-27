@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { USER_ROLES } = require('../constants');
+const fileMetadataSchema = require('./schemas/fileMetadata');
 
 // Modelo de User (cliente).
 const userSchema = new mongoose.Schema({
@@ -23,7 +24,12 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: Object.values(USER_ROLES),
-    default: USER_ROLES.USER },
+    default: USER_ROLES.USER,
+  },
+  documents: {
+    type: [fileMetadataSchema],
+    default: [],
+  },
 });
 
 module.exports = mongoose.model('User', userSchema);

@@ -23,6 +23,7 @@ class OrderService {
         if (
             typeof customerName !== "string" ||
             !customerName.trim() ||
+            typeof address !== "string" ||
             !address.trim() ||
             weight === undefined
         ) {

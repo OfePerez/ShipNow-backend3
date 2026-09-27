@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema({
       price: { type: Number },
     },
   ],
-  courierId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  courierId: { type: mongoose.Schema.Types.ObjectId, ref: "Courier" },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

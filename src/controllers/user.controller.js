@@ -5,7 +5,7 @@ class UserController {
   static async create(req, res, next) {
     try {
       const user = await UserService.create(req.body);
-      return res.status(201).json(user);
+      return res.status(201).json({ status: "success", message: "Usuario creado correctamente", payload: user });
     } catch (error) {
       next(error);
     }
@@ -13,8 +13,8 @@ class UserController {
 
   static async getAll(req, res, next) {
     try {
-      const users = await UserService.getAll();
-      return res.status(200).json(users);
+      const { users, pagination } = await UserService.getAll(req.query);
+      return res.status(200).json({ status: "success", payload: users, pagination });
     } catch (error) {
       next(error);
     }
@@ -23,10 +23,17 @@ class UserController {
   static async getById(req, res, next) {
     try {
       const user = await UserService.getById(req.params.id);
-      return res.status(200).json(user);
+      return res.status(200).json({ status: "success", payload: user });
     } catch (error) {
       next(error);
     }
+  }
+
+  static async addDocument(req, res, next) {
+    try {
+      const user = await UserService.addDocument(req.params.id, req.body.documentType, req.file);
+      return res.status(201).json({ status: "success", message: "Documento cargado correctamente", payload: user });
+    } catch (error) { next(error); }
   }
 }
 

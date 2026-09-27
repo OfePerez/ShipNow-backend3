@@ -3,3 +3,10 @@ node_modules
 *.log
 .DS_Store
 logs/
+uploads/
+uploads-test/
+coverage/
+.env.test
+.env.production
+npm-debug.log*
+.DS_Store

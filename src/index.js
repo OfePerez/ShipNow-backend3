@@ -13,7 +13,7 @@ async function startServer(){
       logger.info(`ShipNow escuchando en el puerto ${config.PORT}`);
     });
   }catch (error){
-    logger.fatal('no se pudo iniciar la aplicación:', error.message);
+    logger.fatal(`No se pudo iniciar la aplicación: ${error.message}`);
     process.exit(1);
   }
 }

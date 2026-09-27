@@ -1,8 +1,8 @@
 const User= require('../models/user');
 const Order= require('../models/order');
 const Delivery=require('../models/delivery');
+const Courier=require('../models/courier');
 const {USER_ROLES}= require('../constants');
-const delivery = require('../models/delivery');
 
 async function seedMocks({users, orders, deliveries}) {
     const mockEmails= users.map((user)=> user.email);
@@ -12,7 +12,14 @@ async function seedMocks({users, orders, deliveries}) {
     const createdUsers= await User.insertMany(users);
 
     const customers= createdUsers.filter((user)=> user.role === USER_ROLES.USER);
-    const couriers= createdUsers.filter((user)=> user.role === USER_ROLES.COURIER);
+    const courierUsers= createdUsers.filter((user)=> user.role === USER_ROLES.COURIER);
+    const courierNames = courierUsers.map((user) => `${user.first_name} ${user.last_name}`);
+    await Courier.deleteMany({ name: { $in: courierNames } });
+    const couriers = await Courier.insertMany(courierUsers.map((user) => ({
+        name: `${user.first_name} ${user.last_name}`,
+        zone: "mock-zone",
+        available: true,
+    })));
 
     const ordersToCreate= orders.map((order, index)=> {
         const customer= customers[index % customers.length];
@@ -43,6 +50,7 @@ async function seedMocks({users, orders, deliveries}) {
 
     return{
         users: createdUsers,
+        couriers,
         orders: createdOrders,
         deliveries: createdDeliveries,
     };
